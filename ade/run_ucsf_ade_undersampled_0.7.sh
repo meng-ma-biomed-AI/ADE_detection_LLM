@@ -6,7 +6,7 @@ conda activate ucsf-ade
 module load cuda/11.5.0
 export PYTHONPATH=~/ade:$PYTHONPATH
 
-TASK="ucsf_ade_undersampled_0.5"
+TASK="ucsf_ade_undersampled_0.7"
 DATADIR="/wynton/protected/project/outcome_pred/ade/data/"
 MODEL_TYPE="bert"
 CHECKPOINT_DIR="/wynton/protected/project/outcome_pred/ucsf_bert_pytorch/512/500k-275k/"
@@ -16,7 +16,7 @@ run=0
 for seed in {30,40,50}; do
   (( run++ ))
   OUTPUT_DIR="/wynton/protected/project/outcome_pred/results/${TASK}/bert/ucsf_bert-512-500k+275k/run${run}/"
-  CUDA_VISIBLE_DEVICES=$SGE_GPU python -m ade.run_transformers_classification \
+  CUDA_VISIBLE_DEVICES=$SGE_GPU python -m run_transformers_classification \
     --task_name ${TASK}\
     --data_dir ${DATADIR}\
     --model_type ${MODEL_TYPE}\

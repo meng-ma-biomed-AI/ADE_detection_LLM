@@ -1,12 +1,9 @@
-module load Sali
-module load gcc
 export PATH=$PATH:~/anaconda3/bin
 source ~/anaconda3/etc/profile.d/conda.sh
 conda activate ucsf-ade
-module load cuda/11.5.0
 export PYTHONPATH=~/ade:$PYTHONPATH
 
-TASK="ucsf_med_before_hosp"
+TASK="ucsf_ade"
 DATADIR="/wynton/protected/project/outcome_pred/ade/data/"
 MODEL_TYPE="bert"
 CHECKPOINT_DIR="/wynton/protected/project/outcome_pred/ucsf_bert_pytorch/512/500k-275k/"
@@ -14,8 +11,8 @@ MAX_SEQ_LEN=512
 run=0
 for seed in {10,20,30,40,50}; do
   (( run++ ))
-  OUTPUT_DIR="/wynton/protected/project/outcome_pred/results/${TASK}/us_0.8/bert/ucsf_bert-512-500k+275k/run${run}/"
-  CUDA_VISIBLE_DEVICES=$SGE_GPU python -m ade.run_transformers_classification \
+  OUTPUT_DIR="/wynton/protected/project/outcome_pred/results/${TASK}/hier/bert/ucsf_bert-512-500k+275k/run${run}/"
+  CUDA_VISIBLE_DEVICES=$SGE_GPU python -m run_transformers_classification \
     --task_name ${TASK}\
     --data_dir ${DATADIR}\
     --model_type ${MODEL_TYPE}\
@@ -32,6 +29,8 @@ for seed in {10,20,30,40,50}; do
     --learning_rate 2e-5\
     --do_train\
     --do_eval\
+    --hierarchical\
+    --decoder ${DECODER}\
     --warmup_steps 0\
     --overwrite_output_dir \
     --overwrite_cache
@@ -46,6 +45,7 @@ for seed in {10,20,30,40,50}; do
     --max_seq_length ${MAX_SEQ_LEN}\
     --per_gpu_eval_batch_size 8\
     --do_test\
+    --hierarchical\
     --overwrite_output_dir \
     --overwrite_cache
 done
